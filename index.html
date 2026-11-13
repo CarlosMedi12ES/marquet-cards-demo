@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Marquet Cards</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow, noimageindex">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: página de carpeta de coleccionista. Rejilla con filetes de 1 px (bolsillos), datos en mono como etiqueta de archivo, un único color de acción. */
+:root{
+  --paper:#E9EAE5; --sheet:#F6F6F2; --ink:#15171C; --mute:#666A71; --rule:#C6C8C0;
+  --accent:#2340D3; --accent-ink:#FFFFFF; --seal:#C9261D; --ok:#2C6A4C; --warn:#9A6A00;
+  --stage:#DCDDD6; --box-edge:rgba(0,0,0,.28);
+  --shadow:0 18px 40px -22px rgba(21,23,28,.45);
+  --f-display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --f-body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#111216; --sheet:#1A1C21; --ink:#E8E9E4; --mute:#9A9EA6; --rule:#2E3138;
+  --accent:#7D90FF; --accent-ink:#0D0F18; --seal:#FF6458; --ok:#63B38C; --warn:#E0B04A;
+  --stage:#22252B; --box-edge:rgba(0,0,0,.45);
+  --shadow:0 18px 40px -22px rgba(0,0,0,.8); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#111216; --sheet:#1A1C21; --ink:#E8E9E4; --mute:#9A9EA6; --rule:#2E3138;
+  --accent:#7D90FF; --accent-ink:#0D0F18; --seal:#FF6458; --ok:#63B38C; --warn:#E0B04A;
+  --stage:#22252B; --box-edge:rgba(0,0,0,.45);
+  --shadow:0 18px 40px -22px rgba(0,0,0,.8); color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.5 var(--f-body);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--sheet)}
+img{max-width:100%}
+.wrap{max-width:1320px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-size:12px;letter-spacing:.02em}
+.lbl{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}
+h1,h2,h3{font-family:var(--f-display);text-transform:uppercase;letter-spacing:.01em;line-height:.95;margin:0;text-wrap:balance}
+
+/* Cabecera */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;gap:20px;min-height:62px;flex-wrap:wrap;padding-block:8px}
+.brand{font-family:var(--f-display);font-weight:900;font-size:30px;letter-spacing:.02em;text-transform:uppercase;text-decoration:none;color:var(--ink);display:flex;align-items:baseline;gap:8px}
+.brand small{font-family:var(--f-mono);font-size:10px;font-weight:400;color:var(--mute);letter-spacing:.06em}
+nav.main{display:flex;gap:4px;flex-wrap:wrap}
+nav.main a{text-decoration:none;color:var(--ink);padding:6px 10px;font-weight:600;font-size:14px;border-bottom:2px solid transparent}
+nav.main a[aria-current="page"]{border-bottom-color:var(--accent)}
+.top .spacer{flex:1}
+.seg{display:inline-flex;border:1px solid var(--ink)}
+.seg button{background:none;border:0;padding:5px 10px;font-family:var(--f-mono);font-size:12px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.cartbtn{background:var(--ink);color:var(--sheet);border:0;padding:8px 14px;font-weight:600;display:flex;gap:8px;align-items:center}
+.cartbtn b{font-family:var(--f-mono);font-weight:500;background:var(--sheet);color:var(--ink);padding:0 6px;font-size:12px}
+
+/* Banda de lanzamiento */
+.drop{background:var(--ink);color:var(--sheet)}
+.drop .wrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap;padding-block:10px}
+.drop .tag{background:var(--seal);color:#fff;font-family:var(--f-mono);font-size:11px;padding:2px 8px;text-transform:uppercase;letter-spacing:.08em}
+.drop strong{font-family:var(--f-display);font-size:22px;text-transform:uppercase;letter-spacing:.02em}
+.clock{font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;display:flex;gap:10px}
+.clock span{display:inline-flex;flex-direction:column;align-items:center;line-height:1.1}
+.clock small{font-size:9px;opacity:.65;text-transform:uppercase}
+.drop button{margin-left:auto;background:none;border:1px solid var(--sheet);color:var(--sheet);padding:6px 12px;font-weight:600}
+
+/* Intro tienda */
+.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;align-items:end;padding-block:34px 22px}
+.intro h1{font-size:clamp(44px,7vw,92px);font-weight:900}
+.intro h1 em{font-style:normal;color:var(--accent)}
+.intro p{max-width:46ch;color:var(--mute);margin:0}
+.facts{display:flex;gap:22px;flex-wrap:wrap;margin-top:14px}
+.facts div{display:flex;flex-direction:column}
+.facts b{font-family:var(--f-display);font-size:26px;font-weight:800}
+@media (max-width:760px){.intro{grid-template-columns:1fr;padding-block:24px 16px}}
+
+/* Filtros */
+.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px);z-index:40;background:var(--paper);border-block:1px solid var(--rule)}
+.filters .wrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding-block:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--rule);background:var(--sheet);padding:5px 11px;font-size:13px;font-weight:500}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--sheet);border-color:var(--ink)}
+.filters input[type=search]{border:1px solid var(--rule);background:var(--sheet);padding:6px 10px;min-width:0;width:220px;max-width:100%}
+.filters select{border:1px solid var(--rule);background:var(--sheet);padding:6px 8px}
+.count{margin-left:auto}
+
+/* Rejilla de producto: filetes de 1 px */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);margin-block:22px 40px}
+@media (max-width:520px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.item{background:var(--sheet);display:flex;flex-direction:column;min-width:0;position:relative}
+.item.open{outline:2px solid var(--accent);outline-offset:-2px;z-index:2}
+.stage{perspective:1100px;padding:18px 18px 8px;cursor:pointer}
+.flip{position:relative;aspect-ratio:3/4;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.75,.2,1)}
+@media (hover:hover){.stage:hover .flip{transform:rotateY(180deg)}}
+.item.flipped .flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center}
+.front{background:radial-gradient(ellipse at 50% 85%,var(--stage),transparent 70%)}
+.back{transform:rotateY(180deg);background:var(--ink);color:var(--sheet);padding:16px;flex-direction:column;align-items:stretch;justify-content:space-between;text-align:left}
+.back h4{margin:0;font-family:var(--f-display);text-transform:uppercase;font-size:20px;line-height:1}
+.back dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12px}
+.back dt{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;opacity:.6;padding-top:2px}
+.back dd{margin:0}
+.back .hint{font-family:var(--f-mono);font-size:10px;opacity:.65}
+.fliptoggle{position:absolute;top:10px;right:10px;z-index:3;border:1px solid var(--rule);background:var(--sheet);width:30px;height:30px;font-size:15px;display:none}
+@media (hover:none){.fliptoggle{display:block}}
+.meta{padding:6px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.meta .name{font-weight:600;font-size:14px;line-height:1.3}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.price{font-family:var(--f-display);font-weight:800;font-size:24px;letter-spacing:.01em}
+.ref{font-family:var(--f-mono);font-size:11px;color:var(--mute)}
+.badge{font-family:var(--f-mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;padding:2px 6px;border:1px solid currentColor}
+.b-lang{color:var(--ink)}
+.b-low{color:var(--seal)}
+.b-pre{background:var(--seal);color:#fff;border-color:var(--seal)}
+.b-out{color:var(--mute)}
+.b-ok{color:var(--ok)}
+.meta .actions{margin-top:auto;display:flex;gap:6px}
+.btn{border:1px solid var(--ink);background:var(--sheet);padding:8px 12px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:var(--rule)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.wide{flex:1}
+
+/* Producto: imagen real de la carta, y sobres y cajas montados con el logo y el arte reales */
+.obj{position:relative;display:flex;flex-direction:column;justify-content:space-between;color:#fff;padding:10px;overflow:hidden;box-shadow:var(--shadow)}
+.obj::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,transparent 60%);mix-blend-mode:soft-light;pointer-events:none}
+.obj .g{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;opacity:.9;position:relative;z-index:1}
+.obj .code{font-family:var(--f-display);font-weight:900;font-size:clamp(26px,3.4vw,40px);line-height:.85;text-transform:uppercase;position:relative;z-index:1}
+.obj .k{font-family:var(--f-mono);font-size:9px;text-transform:uppercase;opacity:.85;position:relative;z-index:1}
+.crimp{clip-path:polygon(0 3%,5% 0,10% 3%,15% 0,20% 3%,25% 0,30% 3%,35% 0,40% 3%,45% 0,50% 3%,55% 0,60% 3%,65% 0,70% 3%,75% 0,80% 3%,85% 0,90% 3%,95% 0,100% 3%,100% 97%,95% 100%,90% 97%,85% 100%,80% 97%,75% 100%,70% 97%,65% 100%,60% 97%,55% 100%,50% 97%,45% 100%,40% 97%,35% 100%,30% 97%,25% 100%,20% 97%,15% 100%,10% 97%,5% 100%,0 97%)}
+.obj.pack{width:62%;height:96%;padding:18px 12px}
+.obj.box{width:92%;height:62%;border-radius:2px}
+.obj.etb{width:80%;height:80%;border-radius:2px}
+.obj.card{width:72%;height:92%;border-radius:10px;border:6px solid #E9D98A}
+.holo{background:conic-gradient(from 210deg at 60% 40%,#ff9cd6,#9ad7ff,#b6ffb0,#fff59a,#ffb27a,#ff9cd6)}
+/* arte de fondo (sobre y caja) */
+.obj .bgart{position:absolute;inset:0;background-size:cover;background-position:50% 22%;filter:saturate(1.15)}
+.obj .bgart::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 35%,rgba(0,0,0,.72) 100%)}
+.obj .logo{position:relative;z-index:1;width:82%;max-height:34%;object-fit:contain;align-self:center;filter:drop-shadow(0 2px 4px rgba(0,0,0,.55))}
+.obj .lt{position:relative;z-index:1;font-family:var(--f-display);font-weight:900;font-size:clamp(22px,3vw,34px);line-height:.9;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.6)}
+/* carta suelta: la imagen tal cual, con brillo */
+.realcard{position:relative;width:74%;aspect-ratio:63/88;max-width:100%;border-radius:4.6%/3.3%;overflow:hidden;box-shadow:var(--shadow)}
+.realcard img{display:block;width:100%;height:100%;object-fit:cover}
+.realcard::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.28) 45%,transparent 60%);pointer-events:none}
+/* Foto real del producto precintado: entera, con sombra suave y el brillo solo sobre el producto. */
+.foto{position:relative;width:88%;height:88%;display:flex;align-items:center;justify-content:center}
+.foto.pack{width:70%}
+.foto img{display:block;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 10px 14px rgba(0,0,0,.28)) drop-shadow(0 2px 3px rgba(0,0,0,.18))}
+.foto::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.30) 48%,transparent 60%);-webkit-mask:var(--m) center/contain no-repeat;mask:var(--m) center/contain no-repeat}
+.realcard.foil::after{background:linear-gradient(115deg,transparent 25%,rgba(255,170,230,.25) 38%,rgba(150,220,255,.25) 50%,rgba(255,250,160,.22) 62%,transparent 75%);mix-blend-mode:color-dodge}
+/* caja con volumen: cara, tapa y lateral */
+.box3d{position:relative;width:78%;height:60%;margin:8% 6% 0 0}
+.box3d.tall{width:66%;height:78%;margin-top:6%}
+.box3d .fr{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;padding:9px;color:#fff;box-shadow:var(--shadow)}
+.box3d .tp{position:absolute;left:0;right:0;bottom:100%;height:14%;transform-origin:bottom;transform:skewX(-42deg) translateX(6.2%);background-size:cover;background-position:50% 10%;filter:brightness(1.25) saturate(.8)}
+.box3d .sd{position:absolute;top:0;bottom:0;left:100%;width:12%;transform-origin:left;transform:skewY(-48deg) translateY(-6.6%);background-size:cover;background-position:80% 50%;filter:brightness(.55)}
+.box3d .tp::after,.box3d .sd::after{content:"";position:absolute;inset:0;background:var(--box-edge)}
+.box3d .fr::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 48%,transparent 60%);pointer-events:none}
+.box3d .k,.box3d .g{position:relative;z-index:1;font-family:var(--f-mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+/* gradeada */
+.obj.slab{width:74%;height:98%;border-radius:6px;background:linear-gradient(#f4f4f4,#dcdcdc)!important;padding:8px;color:#111}
+.slab .lab{background:#fff;border:1px solid #bbb;padding:5px;font-family:var(--f-mono);font-size:9px;line-height:1.25;display:flex;justify-content:space-between;gap:6px;position:relative;z-index:1}
+.slab .lab b{font-size:14px;white-space:nowrap}
+.slab .inner{flex:1;margin-top:6px;border-radius:4px;display:flex;align-items:center;justify-content:center;background:#e9e9e9;box-shadow:inset 0 0 0 1px #c9c9c9;overflow:hidden}
+.slab .inner img{height:94%;width:auto;max-width:94%;object-fit:contain;border-radius:3%}
+
+/* Detalle desplegado dentro de la propia rejilla */
+.detail{grid-column:1/-1;background:var(--sheet);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:0;border-top:2px solid var(--accent);animation:unfold .35s ease-out}
+@keyframes unfold{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0)}}
+@media (max-width:820px){.detail{grid-template-columns:1fr}}
+.zoom{position:relative;overflow:hidden;background:repeating-linear-gradient(45deg,transparent 0 10px,color-mix(in srgb,var(--rule) 35%,transparent) 10px 11px),var(--sheet);border-right:1px solid var(--rule);min-height:380px;display:flex;align-items:center;justify-content:center;cursor:zoom-in}
+.zoom .z{width:min(340px,80%);aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;transition:transform .25s ease-out}
+.zoom.on .z{transform:scale(2.3)}
+.zoom.on{cursor:zoom-out}
+.zoom .ztip{position:absolute;left:12px;bottom:10px}
+.dinfo{padding:26px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.dinfo h2{font-size:clamp(30px,3.6vw,46px);font-weight:900}
+.dinfo p{margin:0;max-width:62ch}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));border-top:1px solid var(--rule);border-left:1px solid var(--rule)}
+.specs div{border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.specs b{font-weight:600;font-size:14px}
+.buy{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.qty{display:inline-flex;border:1px solid var(--ink)}
+.qty button{border:0;background:none;width:32px}
+.qty output{min-width:32px;text-align:center;font-family:var(--f-mono);align-self:center}
+.close{align-self:flex-start;background:none;border:1px solid var(--rule);padding:4px 10px;font-family:var(--f-mono);font-size:11px}
+.note{font-size:13px;color:var(--mute)}
+.notify{display:flex;gap:6px;flex-wrap:wrap}
+.notify input{border:1px solid var(--rule);background:var(--paper);padding:7px 10px;flex:1;min-width:0}
+
+/* Carrito */
+.drawer{position:fixed;inset:0 0 0 auto;width:min(400px,100%);background:var(--sheet);border-left:1px solid var(--ink);z-index:70;transform:translateX(105%);transition:transform .3s ease;display:flex;flex-direction:column;padding:calc(18px + env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) 18px}
+.drawer.open{transform:none}
+.drawer h3{font-size:30px}
+.lines{flex:1;overflow:auto;margin-block:14px;display:flex;flex-direction:column;gap:10px}
+.line{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;border-bottom:1px solid var(--rule);padding-bottom:10px;font-size:14px}
+.line .th{width:44px;height:58px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--paper)}
+.line .th img{max-height:100%;max-width:100%;object-fit:contain}
+.tot{display:flex;justify-content:space-between;font-family:var(--f-display);font-size:26px;font-weight:800}
+.shipbar{height:6px;border:1px solid var(--rule);background:var(--paper);margin-top:6px}
+.shipbar i{display:block;height:100%;background:var(--ok);transition:width .4s ease}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:65}
+
+/* Álbum */
+.alb-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:end;padding-block:30px 18px}
+.alb-head h1{font-size:clamp(40px,6vw,80px);font-weight:900}
+.progress{display:flex;flex-direction:column;gap:6px;min-width:min(320px,100%)}
+.bar{height:10px;border:1px solid var(--ink);background:var(--sheet)}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .6s ease}
+.binder{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:22px;margin-bottom:40px}
+.page{background:var(--sheet);border:1px solid var(--rule);padding:14px;box-shadow:var(--shadow)}
+.page .ph{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}
+.pockets{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pocket{aspect-ratio:63/88;border:1px dashed var(--rule);display:flex;align-items:center;justify-content:center;position:relative;background:color-mix(in srgb,var(--paper) 60%,transparent);overflow:hidden}
+.pocket .ghost{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:cover;border-radius:4%;filter:grayscale(1);opacity:.14}
+.pocket .num{position:relative;font-family:var(--f-mono);font-size:11px;color:var(--mute);text-align:center;padding:4px}
+.pocket.got{border-style:solid;border-color:var(--ink)}
+.pocket.new{animation:slot .9s ease-out}
+@keyframes slot{0%{transform:translateY(-30px) rotate(-6deg);opacity:0}60%{transform:translateY(3px)}100%{transform:none;opacity:1}}
+.mini{position:absolute;inset:3px;border-radius:5px;overflow:hidden}
+.mini img{width:100%;height:100%;object-fit:cover;display:block}
+.mini .dup{position:absolute;right:4px;bottom:4px;background:var(--ink);color:var(--sheet);font-family:var(--f-mono);font-size:10px;padding:0 5px}
+.scanbox{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:0;border:1px solid var(--ink);background:var(--sheet);margin-bottom:26px}
+@media (max-width:760px){.scanbox{grid-template-columns:1fr}}
+.scanbox > div{padding:20px;display:flex;flex-direction:column;gap:12px}
+/* el visor es una cámara: oscuro en los dos temas */
+.viewfinder{background:#15171C;color:#F6F6F2;min-height:220px;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.viewfinder .frame{width:120px;aspect-ratio:63/88;border:2px solid #F6F6F2;position:relative}
+.viewfinder .frame::before{content:"";position:absolute;left:0;right:0;height:2px;background:var(--seal);top:10%;animation:sweep 2s ease-in-out infinite alternate}
+@keyframes sweep{to{top:88%}}
+.viewfinder img{max-height:240px;max-width:100%;object-fit:contain}
+.result{border-left:3px solid var(--accent);padding:8px 12px;background:var(--paper);font-size:14px}
+.result.bad{border-left-color:var(--seal)}
+.login{max-width:480px;background:var(--sheet);border:1px solid var(--ink);padding:24px;display:flex;flex-direction:column;gap:12px;margin-block:30px 50px}
+.login input{border:1px solid var(--rule);background:var(--paper);padding:10px;width:100%}
+.or{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:12px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--rule)}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--ink);margin-bottom:18px;flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:8px 14px;font-weight:600;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{border-bottom-color:var(--accent)}
+
+/* Panel de stock */
+.adm-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:end;padding-block:30px 16px}
+.adm-head h1{font-size:clamp(36px,5vw,64px);font-weight:900}
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);background:var(--sheet);margin-bottom:20px}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:14px}
+th,td{border-bottom:1px solid var(--rule);padding:8px 10px;text-align:left;vertical-align:middle}
+th{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-weight:500;background:var(--paper)}
+td input,td select{border:1px solid var(--rule);background:var(--paper);padding:5px 7px;width:100%;min-width:0}
+td.num input{width:86px;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.addform{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;background:var(--sheet);border:1px solid var(--rule);padding:16px;margin-bottom:40px}
+.addform label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mute)}
+.addform input,.addform select{border:1px solid var(--rule);background:var(--paper);padding:8px;color:var(--ink)}
+.confirm{display:inline-flex;gap:6px;align-items:center;font-size:12px}
+
+/* Textos legales */
+.legalpage{max-width:760px;padding-block:30px 50px;display:flex;flex-direction:column;gap:14px}
+.legalpage h1{font-size:clamp(36px,5vw,60px);font-weight:900}
+.legalpage ul{margin:0;padding:0;list-style:none;border-top:1px solid var(--rule)}
+.legalpage li{border-bottom:1px solid var(--rule);padding:12px 0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.pend{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--warn);border:1px solid currentColor;padding:1px 6px}
+
+/* Newsletter y pie */
+footer{background:var(--ink);color:var(--sheet);margin-top:20px}
+footer .wrap{padding-block:40px 30px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:30px}
+@media (max-width:760px){footer .wrap{grid-template-columns:1fr}}
+footer h2{font-size:clamp(34px,4.5vw,56px);font-weight:900}
+footer form{display:flex;flex-direction:column;gap:12px}
+footer input[type=email]{border:1px solid var(--sheet);background:transparent;color:var(--sheet);padding:11px;width:100%}
+footer .ints{display:flex;gap:8px;flex-wrap:wrap}
+footer .ints label{border:1px solid color-mix(in srgb,var(--sheet) 40%,transparent);padding:5px 10px;font-size:13px;display:flex;gap:6px;align-items:center}
+footer .consent{display:flex;gap:8px;align-items:flex-start;font-size:12px}
+footer .consent a{color:inherit}
+footer .fine{font-size:12px;opacity:.7;max-width:60ch;margin:0}
+footer .btn.primary{align-self:flex-start}
+.legal{border-top:1px solid color-mix(in srgb,var(--sheet) 25%,transparent)}
+.legal .wrap{display:flex;gap:10px 16px;flex-wrap:wrap;justify-content:space-between;padding-block:14px;font-family:var(--f-mono);font-size:11px;opacity:.8;grid-template-columns:none}
+.legal a{color:inherit}
+.legal nav{display:flex;gap:6px 14px;flex-wrap:wrap}
+/* Móvil: cabecera compacta y sin fijar, filtros en una línea que se desliza, rótulos de caja en una línea */
+.box3d .k,.box3d .g{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:760px){
+  header.top,.filters{position:static}
+  .top .wrap{gap:8px 12px;min-height:0}
+  .brand{font-size:24px}
+  .brand small{display:none}
+  .seg button{padding:4px 7px}
+  .slab .lab{font-size:8px}
+  .slab .lab b{font-size:11px}
+  .slab .lab{flex-direction:column-reverse;gap:2px}
+  .top .spacer{display:none}
+  nav.main{order:3;width:100%}
+  nav.main a{padding:4px 8px 6px 0;margin-right:6px}
+  .seg{margin-left:auto}
+  .cartbtn{padding:6px 10px}
+  .chips{flex-wrap:nowrap;overflow-x:auto;max-width:100%;scrollbar-width:none}
+  .chip{flex:none}
+  .filters select{flex:1 1 140px}
+  .filters input[type=search]{flex:1 1 100%;width:auto}
+  .count{margin-left:0}
+}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--sheet);padding:10px 16px;font-size:14px;z-index:90;border-left:3px solid var(--accent);max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#tienda" id="brand">Marquet <small id="brandSub">Cards · ES</small></a>
+    <nav class="main" aria-label="Secciones">
+      <a href="#tienda" data-route="tienda" data-i="nav_shop">Tienda</a>
+      <a href="#album" data-route="album" data-i="nav_album">Mi álbum</a>
+      <a href="#panel" data-route="panel" data-i="nav_admin">Panel de stock</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="seg" role="group" aria-label="Idioma y moneda">
+      <button id="lang-es" aria-pressed="true">ES · €</button>
+      <button id="lang-en" aria-pressed="false">EN · $</button>
+    </div>
+    <button class="cartbtn" id="cartBtn"><span data-i="cart">Cesta</span> <b id="cartCount">0</b></button>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p class="lbl" style="color:inherit;opacity:.7" data-i="nl_eyebrow">Newsletter</p>
+      <h2 data-i="nl_title">Entérate antes de que se agote</h2>
+      <p class="fine" data-i="nl_text">Avisos de preventas y reposiciones solo de los juegos que elijas, promociones y noticias. Un correo a la semana como mucho.</p>
+    </div>
+    <form id="nlForm" novalidate>
+      <label for="nlEmail" class="lbl" style="color:inherit;opacity:.7" data-i="email">Correo electrónico</label>
+      <input type="email" id="nlEmail" placeholder="tu@correo.com" autocomplete="email" required>
+      <div class="ints" role="group" aria-label="Juegos">
+        <label><input type="checkbox" id="nl-pk" value="pokemon" checked> Pokémon</label>
+        <label><input type="checkbox" id="nl-op" value="onepiece" checked> One Piece</label>
+        <label><input type="checkbox" id="nl-lo" value="lorcana"> Lorcana</label>
+        <label><input type="checkbox" id="nl-mg" value="magic"> Magic</label>
+      </div>
+      <label class="consent"><input type="checkbox" id="nlConsent"> <span><span data-i="consent">He leído y acepto la</span> <a href="#legal" data-i="privacy_link">política de privacidad</a>.</span></label>
+      <button class="btn primary" type="submit" data-i="subscribe">Suscribirme</button>
+      <p class="fine" id="nlMsg" data-i="nl_legal">Te enviaremos un correo para confirmar la suscripción. Puedes darte de baja en cualquier momento.</p>
+    </form>
+  </div>
+  <div class="legal"><div class="wrap">
+    <nav aria-label="Legal">
+      <a href="#legal" data-i="l_aviso">Aviso legal</a><a href="#legal" data-i="l_priv">Privacidad</a><a href="#legal" data-i="l_cookies">Cookies</a><a href="#legal" data-i="l_cond">Condiciones de venta</a><a href="#legal" data-i="l_desist">Devoluciones y desistimiento</a>
+    </nav>
+    <span data-i="demo_note">Demo para validación. Precios, stock y fechas son de ejemplo.</span>
+    <span data-i="credits">Imágenes y datos de cartas: TCGdex, optcgapi, Lorcast y Scryfall. Fotos de producto: fabricantes y tiendas. Marcas, personajes y fotos, de sus titulares.</span>
+    <span>marquetcards.com</span>
+  </div></div>
+</footer>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" aria-label="Cesta">
+  <div class="row" style="justify-content:space-between"><h3 data-i="cart">Cesta</h3><button class="close" id="closeCart" data-i="close">Cerrar</button></div>
+  <div class="lines" id="lines"></div>
+  <div class="tot"><span data-i="total">Total</span><span id="total">0</span></div>
+  <p class="note" id="shipNote" style="margin-bottom:0"></p>
+  <div class="shipbar" id="shipBar"><i style="width:0"></i></div>
+  <p class="note" id="preNote"></p>
+  <button class="btn primary" id="checkout" data-i="checkout">Ir al pago</button>
+</aside>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+/* Datos sacados de las APIs por bajar-imagenes.py. No se edita a mano: se vuelve a lanzar el guion. */
+/*API:INICIO*/const API={"productos": {"pk-etb-pe": {"art": {"img": "img/pk-etb-pe-arte.webp", "nombre": "Eevee ex", "numero": "167/131", "edicion": "Evoluciones Prismáticas", "rareza": "Rara Ilustración Especial", "fuente": "TCGdex"}, "logo": {"img": "img/logo-sv08.5-es.webp", "edicion": "Evoluciones Prismáticas", "salida": "2025-01-17", "fuente": "TCGdex"}, "foto": {"img": "img/foto-pk-etb-pe.webp", "fuente": "tcg.pokemon.com (oficial)"}}, "pk-bb-dr": {"art": {"img": "img/pk-bb-dr-arte.webp", "nombre": "Team Rocket's Mewtwo ex", "numero": "231/182", "edicion": "Destined Rivals", "rareza": "Special illustration rare", "fuente": "TCGdex"}, "logo": {"img": "img/logo-sv10-en.webp", "edicion": "Destined Rivals", "salida": "2025-05-30", "fuente": "TCGdex"}, "foto": {"img": "img/foto-pk-bb-dr.webp", "fuente": "Face to Face Games (tienda)"}}, "pk-pack-me": {"art": {"img": "img/pk-pack-me-arte.webp", "nombre": "Mega-Absol ex", "numero": "180/132", "edicion": "Megaevolución", "rareza": "Rara Ilustración Especial", "fuente": "TCGdex"}, "logo": {"img": "img/logo-me01-es.webp", "edicion": "Megaevolución", "salida": "2025-09-26", "fuente": "TCGdex"}, "foto": {"img": "img/foto-pk-pack-me.webp", "fuente": "Hipergol (tienda)"}}, "pk-single-umb": {"art": {"img": "img/pk-single-umb-arte.webp", "nombre": "Umbreon ex", "numero": "161/131", "edicion": "Evoluciones Prismáticas", "rareza": "Rara Ilustración Especial", "fuente": "TCGdex"}, "logo": {"img": "img/logo-sv08.5-es.webp", "edicion": "Evoluciones Prismáticas", "salida": "2025-01-17", "fuente": "TCGdex"}}, "pk-slab-zard": {"art": {"img": "img/pk-slab-zard-arte.webp", "nombre": "Charizard ex", "numero": "199/165", "edicion": "151", "rareza": "Special illustration rare", "fuente": "TCGdex"}, "logo": {"img": "img/logo-sv03.5-en.webp", "edicion": "151", "salida": "2023-09-22", "fuente": "TCGdex"}}, "op-bb-11": {"art": {"img": "img/op-bb-11-arte.webp", "nombre": "Monkey.D.Luffy", "numero": "OP11-118", "edicion": "A Fist of Divine Speed", "rareza": "SEC", "fuente": "optcgapi"}, "foto": {"img": "img/foto-op-bb-11.webp", "fuente": "Panda Hobby (tienda)"}}, "op-bb-17": {"art": {"img": "img/op-bb-17-arte.webp", "nombre": "Loki", "numero": "OP17-119", "edicion": "The World's Strongest Warriors", "rareza": "SEC", "fuente": "optcgapi"}, "foto": {"img": "img/foto-op-bb-17.webp", "fuente": "Panda Hobby (tienda)"}}, "op-pack-10": {"art": {"img": "img/op-pack-10-arte.webp", "nombre": "Trafalgar Law", "numero": "OP10-119", "edicion": "Royal Blood", "rareza": "SEC", "fuente": "optcgapi"}, "foto": {"img": "img/foto-op-pack-10.webp", "fuente": "Anime-Oz (tienda)"}}, "lo-bb": {"art": {"img": "img/lo-bb-arte.webp", "nombre": "Ariel · Collector of Oddities", "numero": "236", "edicion": "Hyperia City", "rareza": "Enchanted", "fuente": "Lorcast"}, "foto": {"img": "img/foto-lo-bb.webp", "fuente": "Face to Face Games (tienda)"}}, "mg-play": {"art": {"img": "img/mg-play-arte.webp", "nombre": "Twinflame Tyrant", "numero": "97", "edicion": "Foundations", "rareza": "mythic", "artista": "Xabi Gaztelua", "fuente": "Scryfall"}, "foto": {"img": "img/foto-mg-play.webp", "fuente": "Endo Collects (tienda)"}}}, "albumes": {"pokemon": {"edicion": "Evoluciones Prismáticas", "cartas": [{"n": "Exeggcute", "no": "001/131", "img": "img/album-sv08.5-001.webp"}, {"n": "Exeggutor", "no": "002/131", "img": "img/album-sv08.5-002.webp"}, {"n": "Pinsir", "no": "003/131", "img": "img/album-sv08.5-003.webp"}, {"n": "Budew", "no": "004/131", "img": "img/album-sv08.5-004.webp"}, {"n": "Leafeon", "no": "005/131", "img": "img/album-sv08.5-005.webp"}, {"n": "Leafeon ex", "no": "006/131", "img": "img/album-sv08.5-006.webp"}, {"n": "Cottonee", "no": "007/131", "img": "img/album-sv08.5-007.webp"}, {"n": "Whimsicott", "no": "008/131", "img": "img/album-sv08.5-008.webp"}, {"n": "Applin", "no": "009/131", "img": "img/album-sv08.5-009.webp"}, {"n": "Dipplin", "no": "010/131", "img": "img/album-sv08.5-010.webp"}, {"n": "Hydrapple ex", "no": "011/131", "img": "img/album-sv08.5-011.webp"}, {"n": "Ogerpon Máscara Turquesa ex", "no": "012/131", "img": "img/album-sv08.5-012.webp"}, {"n": "Flareon", "no": "013/131", "img": "img/album-sv08.5-013.webp"}, {"n": "Flareon ex", "no": "014/131", "img": "img/album-sv08.5-014.webp"}, {"n": "Litleo", "no": "015/131", "img": "img/album-sv08.5-015.webp"}, {"n": "Pyroar", "no": "016/131", "img": "img/album-sv08.5-016.webp"}, {"n": "Ogerpon Máscara Horno ex", "no": "017/131", "img": "img/album-sv08.5-017.webp"}, {"n": "Slowpoke", "no": "018/131", "img": "img/album-sv08.5-018.webp"}], "fuente": "TCGdex"}, "onepiece": {"edicion": "A Fist of Divine Speed", "cartas": [{"n": "Koby", "no": "OP11-001", "img": "img/album-OP11-001.webp"}, {"n": "Ain", "no": "OP11-002", "img": "img/album-OP11-002.webp"}, {"n": "Usopp", "no": "OP11-003", "img": "img/album-OP11-003.webp"}, {"n": "Kujyaku", "no": "OP11-004", "img": "img/album-OP11-004.webp"}, {"n": "Smoker", "no": "OP11-005", "img": "img/album-OP11-005.webp"}, {"n": "Zephyr", "no": "OP11-006", "img": "img/album-OP11-006.webp"}, {"n": "Tashigi", "no": "OP11-007", "img": "img/album-OP11-007.webp"}, {"n": "Doll", "no": "OP11-008", "img": "img/album-OP11-008.webp"}, {"n": "Nico Robin", "no": "OP11-009", "img": "img/album-OP11-009.webp"}], "fuente": "optcgapi"}}, "generado": "2026-11-13 13:18"};/*API:FIN*/
+</script>
+<script>
+(function(){
+"use strict";
+/* ---------- Almacenamiento local (demo) ---------- */
+const store={get(k,d){try{const v=localStorage.getItem("tcgdemo2."+k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("tcgdemo2."+k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- Textos ---------- */
+const T={
+ es:{brand:"Marquet",sub:"Cards · ES",nav_shop:"Tienda",nav_album:"Mi álbum",nav_admin:"Panel de stock",cart:"Cesta",close:"Cerrar",total:"Total",checkout:"Ir al pago",
+  nl_eyebrow:"Newsletter",nl_title:"Entérate antes de que se agote",nl_text:"Avisos de preventas y reposiciones solo de los juegos que elijas, promociones y noticias. Un correo a la semana como mucho.",
+  email:"Correo electrónico",subscribe:"Suscribirme",nl_legal:"Te enviaremos un correo para confirmar la suscripción. Puedes darte de baja en cualquier momento.",
+  nl_ok:"Revisa tu correo: te hemos enviado el enlace para confirmar la suscripción.",nl_bad:"Escribe un correo válido, por ejemplo nombre@gmail.com.",
+  consent:"He leído y acepto la",privacy_link:"política de privacidad",nl_consent:"Para suscribirte, marca que aceptas la política de privacidad.",
+  l_aviso:"Aviso legal",l_priv:"Privacidad",l_cookies:"Cookies",l_cond:"Condiciones de venta",l_desist:"Devoluciones y desistimiento",
+  legal_title:"Textos legales",legal_text:"Estos textos los redacta el despacho de abogados de la tienda y se publican antes de abrir al público. En la demo aún no están.",pending:"Pendiente",
+  demo_note:"Demo para validación. Precios, stock y fechas son de ejemplo.",
+  credits:"Imágenes y datos de cartas: TCGdex, optcgapi, Lorcast y Scryfall. Fotos de producto: fabricantes y tiendas. Marcas, personajes y fotos, de sus titulares.",
+  h1a:"Sobres, cajas",h1b:"y cartas",h1c:"sueltas",intro:"Producto precintado y cartas revisadas una a una. Pasa el ratón por un producto para girarlo y ábrelo para leer la ficha completa sin salir del listado.",
+  f1:"envío península",f2:"precinto comprobado",f3:"aviso de reposición",f2b:"Uno a uno",f3b:"1 clic",
+  all:"Todo",search:"Buscar sobre, set o carta",lang_any:"Cualquier idioma",type_any:"Cualquier formato",results:"productos",
+  view:"Ver ficha",add:"Añadir",notify:"Avísame",out:"Agotado",low:"Quedan",pre:"Preventa",instock:"En stock",nostock:"Sin stock",hidden_st:"Oculto",ref_es:"Ref. Cardmarket",
+  contents:"Contenido",language:"Idioma",release:"Salida",condition:"Estado",game:"Juego",format:"Formato",limit:"Límite",perclient:"por cliente",
+  edition:"Edición",featured:"En la imagen",cardno:"Número",rarity:"Rareza",
+  hover_hint:"Pulsa para ver la ficha completa",zoom_hint:"Pulsa la imagen para ampliar",close_detail:"Cerrar ficha",
+  notify_ph:"tu@correo.com",notify_ok:"Te avisaremos en cuanto vuelva a haber stock.",added:"Añadido a la cesta",maxed:"Ya tienes en la cesta todas las unidades que se pueden comprar de este producto.",
+  ship_free:"Envío gratis.",ship_left:"Te faltan {x} para el envío gratis.",ship_calc:"El envío se calcula en el pago.",pre_note:"Las preventas salen en un envío aparte, el día de lanzamiento.",empty:"La cesta está vacía.",
+  checkout_demo:"En la demo el pago no está conectado. En producción: Shopify Checkout con tarjeta, Bizum, PayPal y Klarna.",
+  drop_tag:"Preventa",drop_btn:"Reservar",d:"días",h:"h",m:"min",s:"s",
+  alb_title:"Mi álbum",alb_sub:"Escanea las cartas que te salen y se colocan solas en su hueco.",
+  login_title:"Entra para guardar tu colección",login_text:"Sin contraseñas. Te mandamos un código de 6 cifras al correo.",send_code:"Enviar código",
+  code_label:"Código de 6 cifras",code_hint:"En la demo vale cualquier código de 6 cifras.",enter:"Entrar",google:"Continuar con Google",
+  logout:"Salir",scan:"Escanear carta",scan_text:"Desde el móvil se abre la cámara. Encuadra la carta entera, sin reflejos.",
+  simulate:"Probar con una carta de ejemplo",identifying:"Identificando la carta...",found:"Encontrada",new_slot:"y colocada en tu álbum.",already:"Ya la tenías. Se suma a tus repetidas.",
+  simnote:"Demo: el reconocimiento elige una carta que te falta.",
+  page:"Página",of:"de",missing:"Te faltan",collected:"conseguidas",
+  adm_title:"Panel de stock",adm_sub:"Alta, baja y cambios. Lo que se toca aquí se ve al momento en la tienda.",
+  adm_prod:"Producto",adm_game:"Juego",adm_type:"Formato",adm_lang:"Idioma",adm_stock:"Stock",adm_eur:"Precio €",adm_usd:"Precio $",adm_status:"Estado",adm_act:"",
+  del:"Eliminar",sure:"¿Eliminar?",yes:"Sí",no:"No",new_prod:"Nuevo producto",name_es:"Nombre (ES)",name_en:"Nombre (EN)",create:"Dar de alta",
+  saved:"Guardado",deleted:"Eliminado",created:"Producto dado de alta",reset:"Restablecer ejemplo",adm_note:"En producción este panel es el de Shopify (o uno propio sobre su API), con acceso solo para la tienda. Aquí se guarda solo en este navegador."},
+ en:{brand:"Marquet",sub:"Cards · US",nav_shop:"Shop",nav_album:"My binder",nav_admin:"Stock panel",cart:"Cart",close:"Close",total:"Total",checkout:"Checkout",
+  nl_eyebrow:"Newsletter",nl_title:"Know before it sells out",nl_text:"Pre-order and restock alerts only for the games you pick, plus deals and news. One email a week at most.",
+  email:"Email",subscribe:"Subscribe",nl_legal:"We'll send you an email to confirm. Unsubscribe any time.",
+  nl_ok:"Check your inbox: we sent you a link to confirm your subscription.",nl_bad:"Enter a valid email, for example name@gmail.com.",
+  consent:"I have read and accept the",privacy_link:"privacy policy",nl_consent:"To subscribe, tick that you accept the privacy policy.",
+  l_aviso:"Legal notice",l_priv:"Privacy",l_cookies:"Cookies",l_cond:"Terms of sale",l_desist:"Returns and withdrawal",
+  legal_title:"Legal",legal_text:"These texts are written by the shop's law firm and published before the shop opens. They are not in the demo yet.",pending:"Pending",
+  demo_note:"Demo for review. Prices, stock and dates are examples.",
+  credits:"Card images and data: TCGdex, optcgapi, Lorcast and Scryfall. Product photos: publishers and retailers. Trademarks, characters and photos belong to their owners.",
+  h1a:"Sealed packs,",h1b:"boxes and",h1c:"singles",intro:"Factory-sealed product and singles checked one by one. Hover a product to flip it, open it to read the full details without leaving the list.",
+  f1:"shipping",f2:"seal checked",f3:"restock alerts",f2b:"One by one",f3b:"1 click",
+  all:"All",search:"Search set, pack or card",lang_any:"Any language",type_any:"Any format",results:"products",
+  view:"Details",add:"Add",notify:"Notify me",out:"Sold out",low:"Only",pre:"Pre-order",instock:"In stock",nostock:"Out of stock",hidden_st:"Hidden",ref_es:"Ref. Cardmarket",
+  contents:"Contents",language:"Language",release:"Release",condition:"Condition",game:"Game",format:"Format",limit:"Limit",perclient:"per customer",
+  edition:"Set",featured:"Pictured",cardno:"Number",rarity:"Rarity",
+  hover_hint:"Tap to see full details",zoom_hint:"Tap the image to zoom",close_detail:"Close details",
+  notify_ph:"you@email.com",notify_ok:"We'll email you as soon as it's back.",added:"Added to cart",maxed:"Your cart already has every unit you can buy of this product.",
+  ship_free:"Free shipping.",ship_left:"Add {x} more for free shipping.",ship_calc:"Shipping is calculated at checkout.",pre_note:"Pre-orders ship separately on release day.",empty:"Your cart is empty.",
+  checkout_demo:"Payment isn't connected in the demo. In production: Shopify Checkout with cards, Apple Pay, PayPal and Shop Pay.",
+  drop_tag:"Pre-order",drop_btn:"Reserve",d:"days",h:"h",m:"min",s:"s",
+  alb_title:"My binder",alb_sub:"Scan the cards you pull and they drop into their pocket.",
+  login_title:"Sign in to save your collection",login_text:"No passwords. We email you a 6-digit code.",send_code:"Send code",
+  code_label:"6-digit code",code_hint:"Any 6-digit code works in the demo.",enter:"Sign in",google:"Continue with Google",
+  logout:"Sign out",scan:"Scan a card",scan_text:"On a phone this opens the camera. Frame the whole card and avoid glare.",
+  simulate:"Try a sample card",identifying:"Identifying the card...",found:"Found",new_slot:"and placed in your binder.",already:"You already had it. Added to your duplicates.",
+  simnote:"Demo: recognition picks a card you're missing.",
+  page:"Page",of:"of",missing:"Missing",collected:"collected",
+  adm_title:"Stock panel",adm_sub:"Add, remove and edit. Changes show in the shop right away.",
+  adm_prod:"Product",adm_game:"Game",adm_type:"Format",adm_lang:"Language",adm_stock:"Stock",adm_eur:"Price €",adm_usd:"Price $",adm_status:"Status",adm_act:"",
+  del:"Delete",sure:"Delete?",yes:"Yes",no:"No",new_prod:"New product",name_es:"Name (ES)",name_en:"Name (EN)",create:"Add product",
+  saved:"Saved",deleted:"Deleted",created:"Product added",reset:"Reset sample data",adm_note:"In production this is the Shopify admin (or a custom one on its API), with shop-only access. Here it's saved in this browser only."}
+};
+const GAMES={pokemon:"Pokémon",onepiece:"One Piece",lorcana:"Lorcana",magic:"Magic"};
+const TYPES={es:{pack:"Sobre",box:"Caja de sobres",etb:"Caja Entrenador Élite",card:"Carta suelta",slab:"Gradeada"},en:{pack:"Booster pack",box:"Booster box",etb:"Elite Trainer Box",card:"Single",slab:"Graded"}};
+const SHIP_FREE={es:60,en:75};
+
+/* ---------- Catálogo de ejemplo (precios y stock de ejemplo; imagen, edición y número salen de la API) ---------- */
+const SEED=[
+ {id:"pk-etb-pe",game:"pokemon",type:"etb",lang:"ES",code:"PRE",c1:"#5B3FA8",c2:"#E58BC8",es:"Evoluciones Prismáticas · Caja de Entrenador Élite",en:"Prismatic Evolutions · Elite Trainer Box",eur:74.95,usd:79.99,ref:89,stock:3,status:"active",
+  c_es:"9 sobres, 65 fundas, 45 cartas de Energía, dados y marcadores, carta promocional",c_en:"9 packs, 65 sleeves, 45 Energy cards, dice and markers, promo card",
+  d_es:"La caja más buscada de la expansión. Precinto de fábrica comprobado antes del envío y caja exterior protegida con cartón.",d_en:"The most wanted box of the set. Factory seal checked before shipping, outer box protected with card."},
+ {id:"pk-bb-dr",game:"pokemon",type:"box",lang:"EN",code:"DRI",c1:"#7A1020",c2:"#1C2F6B",es:"Rivales Predestinados · Caja de 36 sobres",en:"Destined Rivals · Booster Box (36 packs)",eur:189,usd:199.99,ref:212,stock:12,status:"active",
+  c_es:"36 sobres de 10 cartas",c_en:"36 packs, 10 cards each",d_es:"Caja precintada en inglés. Ideal para abrir en directo o guardar cerrada.",d_en:"Sealed English booster box. Great for opening live or keeping sealed."},
+ {id:"pk-pack-me",game:"pokemon",type:"pack",lang:"ES",code:"MEG",c1:"#0F5C5A",c2:"#E9B949",es:"Megaevolución · Sobre",en:"Mega Evolution · Booster pack",eur:5.95,usd:5.49,ref:6.4,stock:140,status:"active",
+  c_es:"10 cartas",c_en:"10 cards",d_es:"Sobre suelto en español. Se envía en funda rígida para que no se doble.",d_en:"Single Spanish pack. Ships in a rigid sleeve so it won't bend."},
+ {id:"pk-single-umb",game:"pokemon",type:"card",lang:"ES",code:"EX",c1:"#14141C",c2:"#3D3A8C",holo:1,es:"Umbreon ex · Rara Ilustración Especial · Carta suelta",en:"Umbreon ex · Special Illustration Rare · Single",eur:960,usd:1049,ref:1010,stock:1,status:"active",cond:"Near Mint",
+  c_es:"1 carta, estado Near Mint, en funda y toploader",c_en:"1 card, Near Mint, sleeved and toploaded",d_es:"Revisada con lupa: esquinas, bordes y centrado. Se envía en funda y toploader dentro de caja rígida, con seguimiento.",d_en:"Checked under magnification: corners, edges and centering. Ships sleeved and toploaded in a rigid box, tracked."},
+ {id:"pk-slab-zard",game:"pokemon",type:"slab",lang:"EN",code:"PSA 10",c1:"#C2410C",c2:"#FACC15",es:"Charizard ex · 151 · PSA 10 · Gradeada",en:"Charizard ex · 151 · PSA 10 · Graded",eur:420,usd:449,ref:455,stock:0,status:"active",cond:"PSA 10",
+  c_es:"Carta gradeada y encapsulada por PSA",c_en:"Card graded and encapsulated by PSA",d_es:"Antes de comprar puedes pedirnos el número de certificado para comprobarlo en la web de PSA.",d_en:"Ask us for the certificate number before buying and check it on PSA's site."},
+ {id:"op-bb-11",game:"onepiece",type:"box",lang:"EN",code:"OP-11",c1:"#B91C1C",c2:"#111827",es:"One Piece OP-11 · Booster Box (24 sobres)",en:"One Piece OP-11 · Booster Box (24 packs)",eur:119,usd:129.99,ref:131,stock:6,status:"active",
+  c_es:"24 sobres de 12 cartas",c_en:"24 packs, 12 cards each",d_es:"Caja precintada en inglés de Bandai.",d_en:"Sealed English box from Bandai."},
+ {id:"op-bb-17",game:"onepiece",type:"box",lang:"EN",code:"OP-17",c1:"#0E3A66",c2:"#E11D48",es:"One Piece OP-17 · Booster Box · Preventa",en:"One Piece OP-17 · Booster Box · Pre-order",eur:124.95,usd:134.99,ref:null,stock:40,status:"pre",limit:2,date:"2026-12-12T10:00:00",rel:"12/12/2026",
+  c_es:"24 sobres de 12 cartas",c_en:"24 packs, 12 cards each",d_es:"Si no recibimos tu unidad, te devolvemos el importe íntegro. Sale en un envío aparte el día de lanzamiento.",d_en:"If your unit doesn't arrive, you get a full refund. Ships separately on release day."},
+ {id:"op-pack-10",game:"onepiece",type:"pack",lang:"JP",code:"OP-10",c1:"#7C2D12",c2:"#F59E0B",es:"One Piece OP-10 · Sobre japonés",en:"One Piece OP-10 · Japanese pack",eur:3.5,usd:3.99,ref:3.8,stock:4,status:"active",
+  c_es:"6 cartas, japonés",c_en:"6 cards, Japanese",d_es:"Sobre japonés original, importado.",d_en:"Original Japanese pack, imported."},
+ {id:"lo-bb",game:"lorcana",type:"box",lang:"EN",code:"LOR",c1:"#1E3A8A",c2:"#D4AF37",es:"Disney Lorcana · Caja de 24 sobres",en:"Disney Lorcana · Booster Box (24 packs)",eur:129,usd:139.99,ref:142,stock:0,status:"active",
+  c_es:"24 sobres de 12 cartas",c_en:"24 packs, 12 cards each",d_es:"Caja precintada de Ravensburger.",d_en:"Sealed box from Ravensburger."},
+ {id:"mg-play",game:"magic",type:"box",lang:"EN",code:"MTG",c1:"#3F3F46",c2:"#B45309",es:"Magic · Play Booster Box (36 sobres)",en:"Magic · Play Booster Box (36 packs)",eur:139,usd:144.99,ref:150,stock:9,status:"active",
+  c_es:"36 Play Boosters",c_en:"36 Play Boosters",d_es:"Caja precintada de Wizards of the Coast.",d_en:"Sealed box from Wizards of the Coast."}
+];
+
+/* ---------- Álbumes: cartas reales de la API, con respaldo si no hay datos ---------- */
+const FALLBACK_ALB={
+ pokemon:{edicion:"Pokémon",cartas:Array.from({length:18},(_,i)=>({n:"Carta "+(i+1),no:String(i+1).padStart(3,"0")+"/018"}))},
+ onepiece:{edicion:"One Piece",cartas:Array.from({length:9},(_,i)=>({n:"Carta "+(i+1),no:"DEMO-"+String(i+1).padStart(3,"0")}))}
+};
+const ALBUMS={};
+["pokemon","onepiece"].forEach(k=>{const a=(API.albumes&&API.albumes[k])||FALLBACK_ALB[k];ALBUMS[k]={label:a.edicion,cards:a.cartas}});
+
+/* ---------- Estado ---------- */
+let lang=store.get("lang","es");
+let products=store.get("products",null)||JSON.parse(JSON.stringify(SEED));
+let cart=store.get("cart",{});
+let user=store.get("user",null);
+const defOwned=()=>{const o={};const pick=(k,idx)=>{o[k]={};idx.forEach((i,j)=>{const c=ALBUMS[k].cards[i];if(c)o[k][c.no]=j===1?2:1})};pick("pokemon",[0,3,4,6,9,15]);pick("onepiece",[0,2]);return o};
+let owned=store.get("owned",null)||defOwned();
+let F={game:"all",type:"all",lang:"all",q:""};
+let openId=null, albumTab="pokemon", loginStep=0, pendingEmail="";
+const t=k=>T[lang][k]??k;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=v=>new Intl.NumberFormat(lang==="es"?"es-ES":"en-US",{style:"currency",currency:lang==="es"?"EUR":"USD"}).format(v);
+const priceOf=p=>lang==="es"?p.eur:p.usd;
+const money=p=>fmt(priceOf(p));
+const visible=p=>p.status!=="hidden";
+function toast(msg){const el=$("#toast");el.textContent=msg;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,3200)}
+function saveProducts(){store.set("products",products)}
+const A=p=>(API.productos&&API.productos[p.id])||{};
+function relOf(p){if(p.rel)return p.rel;const s=A(p).logo&&A(p).logo.salida;if(s){const [y,m,d]=s.split("-");return lang==="es"?`${d}/${m}/${y}`:`${m}/${d}/${y}`}return "-"}
+function editionOf(p){const a=A(p);return (a.logo&&a.logo.edicion)||(a.art&&a.art.edicion)||""}
+
+/* ---------- Imagen del producto ---------- */
+function oldArt(p){
+  const bg=`background:linear-gradient(150deg,${p.c1} 0%,${p.c1} 45%,${p.c2} 100%)`;
+  if(p.type==="slab") return `<div class="obj slab"><div class="lab"><span>${esc(p.code)}<br>${GAMES[p.game]}</span><b>${esc(p.cond||"")}</b></div><div class="inner holo"></div></div>`;
+  const crimp=p.type==="pack"?" crimp":"";
+  return `<div class="obj ${p.type}${crimp}${p.holo&&p.type==="card"?" holo":""}" style="${p.type==="card"&&p.holo?"":bg}">
+    <span class="g">${GAMES[p.game]} · ${p.lang}</span>
+    <span class="code" ${p.type==="card"?'style="color:#14141C"':""}>${esc(p.code)}</span>
+    <span class="k" ${p.type==="card"?'style="color:#14141C"':""}>${esc(TYPES[lang][p.type])}</span></div>`;
+}
+function art(p){
+  const a=A(p).art, lg=A(p).logo, f=A(p).foto;
+  if(f&&p.type!=="card"&&p.type!=="slab"){const src=esc(f.img);
+    return `<div class="foto${p.type==="pack"?" pack":""}" style="--m:url('${src}')"><img src="${src}" alt="${esc(p[lang])}" loading="lazy"></div>`;}
+  if(!a) return oldArt(p);
+  const img=esc(a.img), alt=esc(a.nombre);
+  const logo=lg?`<img class="logo" src="${esc(lg.img)}" alt="${esc(lg.edicion)}">`:`<span class="lt">${esc(p.code)}</span>`;
+  const typ=esc(TYPES[lang][p.type]);
+  if(p.type==="card") return `<div class="realcard${p.holo?" foil":""}"><img src="${img}" alt="${alt}" loading="lazy"></div>`;
+  if(p.type==="slab") return `<div class="obj slab"><div class="lab"><span>${esc(a.nombre)}<br>${esc(a.edicion)} · ${esc(a.numero)}</span><b>${esc(p.cond||"")}</b></div><div class="inner"><img src="${img}" alt="${alt}" loading="lazy"></div></div>`;
+  if(p.type==="pack") return `<div class="obj pack crimp" style="background:${p.c1}"><div class="bgart" style="background-image:url('${img}')"></div>${logo}<span class="k">${GAMES[p.game]} · ${p.lang} · ${typ}</span></div>`;
+  const tall=p.type==="etb"?" tall":"";
+  return `<div class="box3d${tall}"><div class="tp" style="background-image:url('${img}');background-color:${p.c1}"></div>
+    <div class="fr" style="background:${p.c1}"><div class="bgart" style="position:absolute;inset:0;background-size:cover;background-position:50% 25%;background-image:url('${img}')"></div>
+      <span class="g">${GAMES[p.game]} · ${p.lang}</span>${logo}<span class="k">${typ}</span></div>
+    <div class="sd" style="background-image:url('${img}');background-color:${p.c2}"></div></div>`;
+}
+function stockBadge(p){
+  if(p.status==="pre") return `<span class="badge b-pre">${t("pre")}</span>`;
+  if(p.status==="out") return `<span class="badge b-out">${t("nostock")}</span>`;
+  if(p.stock<=0) return `<span class="badge b-out">${t("out")}</span>`;
+  if(p.stock<=5) return `<span class="badge b-low">${t("low")} ${p.stock}</span>`;
+  return `<span class="badge b-ok">${t("instock")}</span>`;
+}
+function refPrice(p){
+  /* Solo se enseña el precio de referencia que de verdad se tiene: Cardmarket en euros. */
+  if(lang!=="es"||p.ref==null) return "";
+  return `<span class="ref">${t("ref_es")} ${fmt(p.ref)}</span>`;
+}
+
+/* ---------- Tienda ---------- */
+function filtered(){
+  const q=F.q.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  return products.filter(p=>visible(p)&&(F.game==="all"||p.game===F.game)&&(F.type==="all"||p.type===F.type)&&(F.lang==="all"||p.lang===F.lang)
+    &&(!q||(p.es+" "+p.en+" "+p.code+" "+GAMES[p.game]+" "+editionOf(p)+" "+((A(p).art||{}).nombre||"")).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").includes(q)));
+}
+function preProduct(){return products.find(p=>p.status==="pre"&&visible(p))}
+function renderShop(){
+  const pre=preProduct();
+  $("#app").innerHTML=`
+  ${pre?`<section class="drop"><div class="wrap"><span class="tag">${t("drop_tag")}</span><strong>${esc(pre[lang])}</strong>
+    <div class="clock" id="clock"></div><button id="dropBtn">${t("drop_btn")} · ${money(pre)}</button></div></section>`:""}
+  <div class="wrap">
+    <section class="intro">
+      <h1>${t("h1a")} ${t("h1b")} <em>${t("h1c")}</em></h1>
+      <div><p>${t("intro")}</p>
+        <div class="facts"><div><b>24/48 h</b><span class="lbl">${t("f1")}</span></div><div><b>${t("f2b")}</b><span class="lbl">${t("f2")}</span></div><div><b>${t("f3b")}</b><span class="lbl">${t("f3")}</span></div></div>
+      </div>
+    </section>
+  </div>
+  <div class="filters"><div class="wrap">
+    <div class="chips" role="group" aria-label="${t("game")}">
+      ${["all","pokemon","onepiece","lorcana","magic"].map(g=>`<button class="chip" data-game="${g}" aria-pressed="${F.game===g}">${g==="all"?t("all"):GAMES[g]}</button>`).join("")}
+    </div>
+    <select id="fType" aria-label="${t("format")}"><option value="all">${t("type_any")}</option>${Object.keys(TYPES.es).map(k=>`<option value="${k}" ${F.type===k?"selected":""}>${TYPES[lang][k]}</option>`).join("")}</select>
+    <select id="fLang" aria-label="${t("language")}"><option value="all">${t("lang_any")}</option>${["ES","EN","JP"].map(k=>`<option ${F.lang===k?"selected":""}>${k}</option>`).join("")}</select>
+    <input type="search" id="fQ" placeholder="${t("search")}" value="${esc(F.q)}">
+    <span class="count lbl" id="count"></span>
+  </div></div>
+  <div class="wrap"><div class="grid" id="grid"></div></div>`;
+  $("#app").querySelectorAll("[data-game]").forEach(b=>b.onclick=()=>{F.game=b.dataset.game;openId=null;renderShop()});
+  $("#fType").onchange=e=>{F.type=e.target.value;openId=null;renderGrid()};
+  $("#fLang").onchange=e=>{F.lang=e.target.value;openId=null;renderGrid()};
+  $("#fQ").oninput=e=>{F.q=e.target.value;openId=null;renderGrid()};
+  if(pre){$("#dropBtn").onclick=()=>{openId=pre.id;F.game="all";F.type="all";F.lang="all";F.q="";renderShop();$("#d-"+pre.id)?.scrollIntoView({behavior:"smooth",block:"start"})};tick()}
+  renderGrid();
+}
+function backSpecs(p){
+  const a=A(p).art||{}, ed=editionOf(p);
+  return `<dt>${t("contents")}</dt><dd>${esc(lang==="es"?p.c_es:p.c_en)}</dd>
+    ${ed?`<dt>${t("edition")}</dt><dd>${esc(ed)}</dd>`:""}
+    <dt>${t("language")}</dt><dd>${p.lang}</dd>
+    ${p.cond?`<dt>${t("condition")}</dt><dd>${esc(p.cond)}</dd>`:""}
+    ${(p.type==="card"||p.type==="slab")&&a.numero?`<dt>${t("cardno")}</dt><dd>${esc(a.numero)}</dd>`:""}
+    <dt>${t("release")}</dt><dd>${esc(relOf(p))}</dd>
+    ${p.limit?`<dt>${t("limit")}</dt><dd>${p.limit} ${t("perclient")}</dd>`:""}`;
+}
+function renderGrid(){
+  const g=$("#grid"); if(!g) return;
+  const list=filtered();
+  $("#count").textContent=list.length+" "+t("results");
+  g.innerHTML=list.map((p,i)=>`
+   <article class="item${openId===p.id?" open":""}" data-id="${p.id}" style="order:${i*2}">
+     <button class="fliptoggle" aria-label="Girar" data-flip="${p.id}">↻</button>
+     <div class="stage" data-open="${p.id}" role="button" tabindex="0" aria-label="${esc(p[lang])}">
+       <div class="flip">
+         <div class="face front">${art(p)}</div>
+         <div class="face back"><h4>${esc(p[lang])}</h4><dl>${backSpecs(p)}</dl>
+           <span class="hint">${t("hover_hint")} →</span></div>
+       </div>
+     </div>
+     <div class="meta">
+       <div class="row"><span class="badge b-lang">${p.lang}</span>${stockBadge(p)}<span class="lbl">${TYPES[lang][p.type]}</span></div>
+       <div class="name">${esc(p[lang])}</div>
+       <div class="row" style="align-items:baseline"><span class="price">${money(p)}</span>${refPrice(p)}</div>
+       <div class="actions">${maxBuy(p)>0?`<button class="btn primary wide" data-add="${p.id}">${p.status==="pre"?t("drop_btn"):t("add")}</button>`:`<button class="btn wide" data-open="${p.id}">${t("notify")}</button>`}
+       <button class="btn ghost" data-open="${p.id}">${t("view")}</button></div>
+     </div>
+   </article>`).join("");
+  if(openId&&list.some(p=>p.id===openId)) insertDetail(list);
+  g.querySelectorAll("[data-open]").forEach(el=>{el.onclick=()=>toggleDetail(el.dataset.open);el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();toggleDetail(el.dataset.open)}}});
+  g.querySelectorAll("[data-add]").forEach(b=>b.onclick=e=>{e.stopPropagation();addToCart(b.dataset.add,1)});
+  g.querySelectorAll("[data-flip]").forEach(b=>b.onclick=e=>{e.stopPropagation();b.closest(".item").classList.toggle("flipped")});
+}
+function cols(){const g=$("#grid");return getComputedStyle(g).gridTemplateColumns.split(" ").filter(Boolean).length||1}
+function toggleDetail(id){openId=openId===id?null:id;renderGrid();if(openId){const d=$("#d-"+id);d&&d.scrollIntoView({behavior:"smooth",block:"nearest"})}}
+function maxBuy(p){return p.status==="out"?0:Math.max(0,Math.min(p.limit||Infinity,p.stock))}
+function insertDetail(list){
+  const i=list.findIndex(p=>p.id===openId), p=list[i], c=cols();
+  const end=Math.min(Math.floor(i/c)*c+c-1,list.length-1);
+  const a=A(p).art||{}, ed=editionOf(p);
+  const d=document.createElement("section");
+  d.className="detail";d.id="d-"+p.id;d.style.order=end*2+1;
+  const canBuy=maxBuy(p)>0;
+  d.innerHTML=`
+   <div class="zoom" id="zoom" title="${t("zoom_hint")}"><div class="z" id="zimg">${art(p)}</div><span class="ztip lbl">${t("zoom_hint")}</span></div>
+   <div class="dinfo">
+     <button class="close" id="closeDetail">✕ ${t("close_detail")}</button>
+     <div class="row"><span class="badge b-lang">${p.lang}</span>${stockBadge(p)}<span class="lbl">${GAMES[p.game]} · ${TYPES[lang][p.type]}</span></div>
+     <h2>${esc(p[lang])}</h2>
+     <p>${esc(lang==="es"?p.d_es:p.d_en)}</p>
+     <div class="specs">
+       <div><span class="lbl">${t("contents")}</span><b>${esc(lang==="es"?p.c_es:p.c_en)}</b></div>
+       ${ed?`<div><span class="lbl">${t("edition")}</span><b>${esc(ed)}</b></div>`:""}
+       <div><span class="lbl">${t("language")}</span><b>${p.lang}</b></div>
+       <div><span class="lbl">${t("release")}</span><b>${esc(relOf(p))}</b></div>
+       ${p.cond?`<div><span class="lbl">${t("condition")}</span><b>${esc(p.cond)}</b></div>`:""}
+       ${a.nombre&&!(A(p).foto&&p.type!=="card"&&p.type!=="slab")?`<div><span class="lbl">${p.type==="card"||p.type==="slab"?t("cardno"):t("featured")}</span><b>${p.type==="card"||p.type==="slab"?esc(a.numero):esc(a.nombre)}</b></div>`:""}
+       ${a.rareza&&(p.type==="card"||p.type==="slab")?`<div><span class="lbl">${t("rarity")}</span><b>${esc(a.rareza)}</b></div>`:""}
+       ${p.limit?`<div><span class="lbl">${t("limit")}</span><b>${p.limit} ${t("perclient")}</b></div>`:""}
+     </div>
+     <div class="row" style="align-items:baseline"><span class="price" style="font-size:38px">${money(p)}</span>${refPrice(p)}</div>
+     ${p.status==="pre"?`<div class="clock" id="clock2" style="color:var(--seal)"></div>`:""}
+     ${canBuy?`<div class="buy"><div class="qty"><button id="qm" aria-label="-">−</button><output id="qv">1</output><button id="qp" aria-label="+">+</button></div>
+        <button class="btn primary" id="dAdd">${p.status==="pre"?t("drop_btn"):t("add")} · ${money(p)}</button></div>
+        <p class="note">${p.status==="pre"?t("pre_note"):shipText(cartTotal()+priceOf(p))}</p>`
+      :`<form class="notify" id="notifyForm"><input type="email" id="notifyEmail" placeholder="${t("notify_ph")}" aria-label="${t("email")}"><button class="btn primary">${t("notify")}</button></form>`}
+   </div>`;
+  $("#grid").appendChild(d);
+  $("#closeDetail").onclick=()=>toggleDetail(p.id);
+  const z=$("#zoom"),zi=$("#zimg");
+  const at=e=>{const r=z.getBoundingClientRect();const x=((e.clientX-r.left)/r.width)*100,y=((e.clientY-r.top)/r.height)*100;zi.style.transformOrigin=x+"% "+y+"%"};
+  z.onclick=e=>{at(e);z.classList.toggle("on")};
+  z.onmousemove=e=>{if(z.classList.contains("on"))at(e)};
+  if(canBuy){let q=1;const max=maxBuy(p);
+    $("#qm").onclick=()=>{q=Math.max(1,q-1);$("#qv").textContent=q};
+    $("#qp").onclick=()=>{q=Math.min(max,q+1);$("#qv").textContent=q};
+    $("#dAdd").onclick=()=>addToCart(p.id,q);}
+  else $("#notifyForm").onsubmit=e=>{e.preventDefault();const v=$("#notifyEmail").value.trim();if(!/^\S+@\S+\.\S+$/.test(v)){toast(t("nl_bad"));return}toast(t("notify_ok"));$("#notifyEmail").value=""};
+  tick();
+}
+let resizeT;window.addEventListener("resize",()=>{clearTimeout(resizeT);resizeT=setTimeout(()=>{if(openId&&$("#grid"))renderGrid()},150)});
+
+function tick(){
+  const pre=preProduct();if(!pre||!pre.date)return;
+  const ms=Math.max(0,new Date(pre.date)-Date.now());
+  const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60,s=Math.floor(ms/1e3)%60;
+  const html=`<span>${d}<small>${t("d")}</small></span><span>${String(h).padStart(2,"0")}<small>${t("h")}</small></span><span>${String(m).padStart(2,"0")}<small>${t("m")}</small></span><span>${String(s).padStart(2,"0")}<small>${t("s")}</small></span>`;
+  ["#clock","#clock2"].forEach(s=>{const el=$(s);if(el)el.innerHTML=html});
+}
+setInterval(tick,1000);
+
+/* ---------- Cesta ---------- */
+function cartIds(){return Object.keys(cart).filter(id=>products.some(p=>p.id===id&&visible(p))&&cart[id]>0)}
+function cartTotal(){return cartIds().reduce((a,id)=>{const p=products.find(x=>x.id===id);return p.status==="pre"?a:a+priceOf(p)*cart[id]},0)}
+function shipText(sub){const lim=SHIP_FREE[lang];if(sub>=lim)return t("ship_free");if(sub>0)return t("ship_left").replace("{x}",fmt(lim-sub));return t("ship_calc")+" "+t("ship_left").replace("{x}",fmt(lim))}
+function addToCart(id,q){const p=products.find(x=>x.id===id);if(!p)return;const cur=cart[id]||0;const max=maxBuy(p);
+  const next=Math.min(max,cur+q);
+  if(next<=cur){toast(t("maxed"));return}
+  cart[id]=next;store.set("cart",cart);renderCart();toast(t("added")+" · "+p[lang]+(next-cur>1?" × "+(next-cur):""))}
+function thumb(p){const a=A(p);const src=(a.foto&&p.type!=="card"&&p.type!=="slab"&&a.foto.img)||(a.art&&a.art.img)||(a.logo&&a.logo.img);return src?`<img src="${esc(src)}" alt="">`:""}
+function renderCart(){
+  const ids=cartIds();
+  $("#cartCount").textContent=ids.reduce((a,id)=>a+cart[id],0);
+  let tot=0;
+  $("#lines").innerHTML=ids.length?ids.map(id=>{const p=products.find(x=>x.id===id);const v=priceOf(p)*cart[id];tot+=v;
+    return `<div class="line"><span class="th">${thumb(p)}</span><span>${esc(p[lang])}<br><span class="mono">× ${cart[id]}</span> <button class="close" data-rm="${id}">✕</button></span><b>${fmt(v)}</b></div>`}).join(""):`<p class="note">${t("empty")}</p>`;
+  $("#total").textContent=fmt(tot);
+  const sub=cartTotal();
+  $("#shipNote").textContent=shipText(sub);
+  $("#shipBar").firstElementChild.style.width=Math.min(100,sub/SHIP_FREE[lang]*100)+"%";
+  $("#preNote").textContent=ids.some(id=>products.find(p=>p.id===id).status==="pre")?t("pre_note"):"";
+  $("#lines").querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{delete cart[b.dataset.rm];store.set("cart",cart);renderCart()});
+}
+function openCart(o){$("#drawer").classList.toggle("open",o);$("#scrim").hidden=!o}
+$("#cartBtn").onclick=()=>openCart(true);$("#closeCart").onclick=()=>openCart(false);$("#scrim").onclick=()=>openCart(false);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")openCart(false)});
+$("#checkout").onclick=()=>toast(t("checkout_demo"));
+
+/* ---------- Álbum y escáner ---------- */
+function renderAlbum(){
+  if(!user){renderLogin();return}
+  const Al=ALBUMS[albumTab],own=owned[albumTab]||{};
+  const got=Al.cards.filter(c=>own[c.no]).length,pct=Math.round(got/Al.cards.length*100);
+  const pages=[];for(let i=0;i<Al.cards.length;i+=9)pages.push(Al.cards.slice(i,i+9));
+  $("#app").innerHTML=`<div class="wrap">
+   <div class="alb-head"><div><p class="lbl">${esc(user.email)} · <button class="close" id="logout">${t("logout")}</button></p><h1>${t("alb_title")}</h1><p class="note">${t("alb_sub")}</p></div>
+     <div class="progress"><div class="row" style="justify-content:space-between"><span class="lbl">${esc(Al.label)}</span><span class="mono">${got}/${Al.cards.length} · ${pct} %</span></div><div class="bar"><i style="width:${pct}%"></i></div>
+     <span class="note">${t("missing")} ${Al.cards.length-got} · ${got} ${t("collected")}</span></div></div>
+   <div class="tabs" role="tablist">${Object.keys(ALBUMS).map(k=>`<button role="tab" aria-selected="${k===albumTab}" data-tab="${k}">${GAMES[k]}</button>`).join("")}</div>
+   <section class="scanbox">
+     <div class="viewfinder" id="vf"><div class="frame"></div></div>
+     <div><h3 style="font-size:32px">${t("scan")}</h3><p class="note" style="margin:0">${t("scan_text")}</p>
+       <div class="row"><label class="btn primary" for="scanInput" style="display:inline-block">${t("scan")}</label>
+       <input type="file" id="scanInput" accept="image/*" capture="environment" hidden>
+       <button class="btn" id="simBtn">${t("simulate")}</button></div>
+       <div id="scanResult"></div></div>
+   </section>
+   <div class="binder">${pages.map((pg,pi)=>`<section class="page"><div class="ph"><span class="lbl">${t("page")} ${pi+1} ${t("of")} ${pages.length}</span><span class="lbl">${esc(Al.label)}</span></div>
+     <div class="pockets">${pg.map(c=>`<div class="pocket${own[c.no]?" got":""}" id="pk-${c.no.replace(/\W/g,"")}">${own[c.no]?mini(c,own[c.no]):`${c.img?`<img class="ghost" src="${esc(c.img)}" alt="" loading="lazy">`:""}<span class="num">${esc(c.no)}<br>${esc(c.n)}</span>`}</div>`).join("")}</div></section>`).join("")}</div>
+  </div>`;
+  $("#logout").onclick=()=>{user=null;store.set("user",null);loginStep=0;renderAlbum()};
+  $("#app").querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{albumTab=b.dataset.tab;renderAlbum()});
+  $("#scanInput").onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)scanFile(f)};
+  $("#simBtn").onclick=()=>simulate();
+}
+function mini(c,n){return c.img?`<div class="mini"><img src="${esc(c.img)}" alt="${esc(c.n)} ${esc(c.no)}" loading="lazy">${n>1?`<span class="dup">×${n}</span>`:""}</div>`
+  :`<div class="mini" style="background:var(--ink);color:var(--sheet);padding:6px;display:flex;flex-direction:column;justify-content:space-between"><span class="mono">${esc(c.no)}</span><b>${esc(c.n)}</b><span>${n>1?"×"+n:""}</span></div>`}
+function place(game,no,name){
+  const own=owned[game]||(owned[game]={});const had=!!own[no];own[no]=(own[no]||0)+1;store.set("owned",owned);
+  albumTab=game;renderAlbum();
+  const el=$("#pk-"+no.replace(/\W/g,""));if(el){el.classList.add("new");el.scrollIntoView({behavior:"smooth",block:"center"})}
+  $("#scanResult").innerHTML=`<div class="result"><b>${t("found")}: ${esc(name)} · ${esc(no)}</b> ${had?t("already"):t("new_slot")}<br><span class="note">${t("simnote")}</span></div>`;
+}
+function simulate(){
+  $("#scanResult").innerHTML=`<div class="result">${t("identifying")}</div>`;
+  setTimeout(()=>{const Al=ALBUMS[albumTab],own=owned[albumTab]||{};const miss=Al.cards.filter(c=>!own[c.no]);const pool=miss.length?miss:Al.cards;const c=pool[Math.floor(Math.random()*pool.length)];place(albumTab,c.no,c.n)},1100);
+}
+function scanFile(f){
+  const url=URL.createObjectURL(f);$("#vf").innerHTML=`<img src="${url}" alt="">`;
+  simulate();
+}
+function renderLogin(){
+  $("#app").innerHTML=`<div class="wrap"><div class="alb-head"><div><h1>${t("alb_title")}</h1><p class="note">${t("alb_sub")}</p></div></div>
+   <form class="login" id="loginForm" novalidate>
+     <h3 style="font-size:30px">${t("login_title")}</h3><p class="note" style="margin:0">${t("login_text")}</p>
+     ${loginStep===0?`<label class="lbl" for="lgEmail">${t("email")}</label><input type="email" id="lgEmail" placeholder="${t("notify_ph")}" autocomplete="email">
+       <button class="btn primary">${t("send_code")}</button><div class="or">o</div><button type="button" class="btn" id="gBtn">${t("google")}</button>`
+     :`<p class="mono">${esc(pendingEmail)}</p><label class="lbl" for="lgCode">${t("code_label")}</label><input id="lgCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000"><p class="note" style="margin:0">${t("code_hint")}</p><button class="btn primary">${t("enter")}</button>`}
+   </form></div>`;
+  $("#loginForm").onsubmit=e=>{e.preventDefault();
+    if(loginStep===0){const v=$("#lgEmail").value.trim();if(!/^\S+@\S+\.\S+$/.test(v)){toast(t("nl_bad"));return}pendingEmail=v;loginStep=1;renderLogin()}
+    else{const c=$("#lgCode").value.trim();if(!/^\d{6}$/.test(c)){toast(t("code_label"));return}user={email:pendingEmail};store.set("user",user);renderAlbum()}};
+  const g=$("#gBtn");if(g)g.onclick=()=>{user={email:"demo@gmail.com"};store.set("user",user);renderAlbum()};
+}
+
+/* ---------- Panel de stock ---------- */
+let pendingDel=null;
+function renderAdmin(){
+  $("#app").innerHTML=`<div class="wrap">
+   <div class="adm-head"><div><h1>${t("adm_title")}</h1><p class="note">${t("adm_sub")}</p><p class="note">${t("adm_note")}</p></div><button class="btn" id="resetBtn">${t("reset")}</button></div>
+   <div class="tablewrap"><table><thead><tr><th>${t("adm_prod")}</th><th>${t("adm_game")}</th><th>${t("adm_type")}</th><th>${t("adm_lang")}</th><th>${t("adm_stock")}</th><th>${t("adm_eur")}</th><th>${t("adm_usd")}</th><th>${t("adm_status")}</th><th>${t("adm_act")}</th></tr></thead>
+   <tbody>${products.map(p=>`<tr data-id="${p.id}">
+     <td><input id="n-${p.id}" data-f="${lang}" value="${esc(p[lang])}" aria-label="${t("adm_prod")}"></td>
+     <td class="mono">${GAMES[p.game]}</td><td class="mono">${TYPES[lang][p.type]}</td><td class="mono">${p.lang}</td>
+     <td class="num"><input id="s-${p.id}" type="number" min="0" data-f="stock" value="${p.stock}" aria-label="${t("adm_stock")}"></td>
+     <td class="num"><input id="e-${p.id}" type="number" min="0" step="0.01" data-f="eur" value="${p.eur}" aria-label="${t("adm_eur")}"></td>
+     <td class="num"><input id="u-${p.id}" type="number" min="0" step="0.01" data-f="usd" value="${p.usd}" aria-label="${t("adm_usd")}"></td>
+     <td><select id="st-${p.id}" data-f="status" aria-label="${t("adm_status")}"><option value="active" ${p.status==="active"?"selected":""}>${t("instock")}</option><option value="pre" ${p.status==="pre"?"selected":""}>${t("pre")}</option><option value="out" ${p.status==="out"?"selected":""}>${t("nostock")}</option><option value="hidden" ${p.status==="hidden"?"selected":""}>${t("hidden_st")}</option></select></td>
+     <td>${pendingDel===p.id?`<span class="confirm">${t("sure")} <button class="btn" data-yes="${p.id}" style="border-color:var(--seal);color:var(--seal)">${t("yes")}</button><button class="btn ghost" data-no>${t("no")}</button></span>`:`<button class="btn ghost" data-del="${p.id}">${t("del")}</button>`}</td></tr>`).join("")}</tbody></table></div>
+   <form class="addform" id="addForm"><h3 style="grid-column:1/-1;font-size:28px">${t("new_prod")}</h3>
+     <label>${t("name_es")}<input id="a-es" required></label><label>${t("name_en")}<input id="a-en" required></label>
+     <label>${t("adm_game")}<select id="a-game">${Object.keys(GAMES).map(g=>`<option value="${g}">${GAMES[g]}</option>`).join("")}</select></label>
+     <label>${t("adm_type")}<select id="a-type">${Object.keys(TYPES.es).map(k=>`<option value="${k}">${TYPES[lang][k]}</option>`).join("")}</select></label>
+     <label>${t("adm_lang")}<select id="a-lang"><option>ES</option><option>EN</option><option>JP</option></select></label>
+     <label>${t("adm_stock")}<input id="a-stock" type="number" min="0" value="10"></label>
+     <label>${t("adm_eur")}<input id="a-eur" type="number" min="0" step="0.01" value="9.95"></label>
+     <label>${t("adm_usd")}<input id="a-usd" type="number" min="0" step="0.01" value="9.99"></label>
+     <button class="btn primary" style="align-self:end">${t("create")}</button></form></div>`;
+  $("#app").querySelectorAll("tbody [data-f]").forEach(inp=>inp.onchange=()=>{const id=inp.closest("tr").dataset.id,p=products.find(x=>x.id===id),f=inp.dataset.f;
+    let v=inp.value;
+    if(f==="stock")v=Math.max(0,parseInt(v||0,10)||0);else if(f==="eur"||f==="usd")v=Math.max(0,parseFloat(v||0)||0);
+    p[f]=v;saveProducts();renderCart();toast(t("saved")+" · "+p[lang])});
+  $("#app").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{pendingDel=b.dataset.del;renderAdmin()});
+  $("#app").querySelectorAll("[data-no]").forEach(b=>b.onclick=()=>{pendingDel=null;renderAdmin()});
+  $("#app").querySelectorAll("[data-yes]").forEach(b=>b.onclick=()=>{products=products.filter(p=>p.id!==b.dataset.yes);delete cart[b.dataset.yes];store.set("cart",cart);pendingDel=null;saveProducts();renderCart();renderAdmin();toast(t("deleted"))});
+  $("#resetBtn").onclick=()=>{products=JSON.parse(JSON.stringify(SEED));saveProducts();renderCart();renderAdmin();toast(t("saved"))};
+  $("#addForm").onsubmit=e=>{e.preventDefault();const es=$("#a-es").value.trim(),en=$("#a-en").value.trim();if(!es||!en){toast(t("name_es")+" / "+t("name_en"));return}
+    const pal=[["#334155","#F59E0B"],["#065F46","#A7F3D0"],["#7F1D1D","#FCA5A5"],["#1E3A8A","#93C5FD"]][products.length%4];
+    products.unshift({id:"n"+Date.now(),game:$("#a-game").value,type:$("#a-type").value,lang:$("#a-lang").value,code:es.split(/\s+/)[0].slice(0,6).toUpperCase(),c1:pal[0],c2:pal[1],es,en,
+      eur:Math.max(0,parseFloat($("#a-eur").value||0)||0),usd:Math.max(0,parseFloat($("#a-usd").value||0)||0),ref:null,stock:Math.max(0,parseInt($("#a-stock").value||0,10)||0),status:"active",c_es:"-",c_en:"-",d_es:"",d_en:"",rel:"-"});
+    saveProducts();renderAdmin();toast(t("created"))};
+}
+
+/* ---------- Textos legales (pendientes) ---------- */
+function renderLegal(){
+  $("#app").innerHTML=`<div class="wrap"><section class="legalpage"><h1>${t("legal_title")}</h1><p class="note" style="margin:0">${t("legal_text")}</p>
+    <ul>${["l_aviso","l_priv","l_cookies","l_cond","l_desist"].map(k=>`<li><b>${t(k)}</b><span class="pend">${t("pending")}</span></li>`).join("")}</ul></section></div>`;
+}
+
+/* ---------- Newsletter ---------- */
+$("#nlForm").onsubmit=e=>{e.preventDefault();const v=$("#nlEmail").value.trim();
+  if(!/^\S+@\S+\.\S+$/.test(v)){$("#nlMsg").textContent=t("nl_bad");return}
+  if(!$("#nlConsent").checked){$("#nlMsg").textContent=t("nl_consent");return}
+  const games=[...document.querySelectorAll("#nlForm .ints input:checked")].map(i=>i.value);
+  const subs=store.get("subs",[]);subs.push({email:v,games,lang,at:new Date().toISOString(),confirmed:false});store.set("subs",subs);
+  $("#nlMsg").textContent=t("nl_ok");$("#nlEmail").value="";$("#nlConsent").checked=false};
+
+/* ---------- Idioma y rutas ---------- */
+function applyLang(){
+  document.documentElement.lang=lang;
+  $("#brand").firstChild.nodeValue=t("brand")+" ";$("#brandSub").textContent=t("sub");
+  document.querySelectorAll("[data-i]").forEach(el=>{el.textContent=t(el.dataset.i)});
+  $("#lang-es").setAttribute("aria-pressed",lang==="es");$("#lang-en").setAttribute("aria-pressed",lang==="en");
+  renderCart();route();
+}
+$("#lang-es").onclick=()=>{lang="es";store.set("lang",lang);applyLang()};
+$("#lang-en").onclick=()=>{lang="en";store.set("lang",lang);applyLang()};
+function route(){
+  const r=(location.hash||"#tienda").slice(1);
+  document.querySelectorAll("nav.main a").forEach(a=>a.setAttribute("aria-current",a.dataset.route===r?"page":"false"));
+  if(r==="album")renderAlbum();else if(r==="panel")renderAdmin();else if(r==="legal")renderLegal();else renderShop();
+}
+window.addEventListener("hashchange",()=>{openCart(false);route();window.scrollTo(0,0)});
+applyLang();
+})();
+</script>
+
+</html>
